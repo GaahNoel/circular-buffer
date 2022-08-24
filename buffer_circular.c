@@ -1,10 +1,23 @@
+/*
+  Gabriel Antonio Noel - 180274
+  Gustavo Daltoe - 180974
+  Gustavo dos Santos Nogueira - 181010
+  Jean Augusto Bauch - 180375
+  Lucas Henrique Antoneli Flaquer - 180952
+  Samuel Ferraz de Araujo - 180207
+  Vinícius Espinosa de Oliveira - 180853
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 int const TAM_MAX = 5;
+
+typedef void (*ponteiroFunc)(void);
 typedef struct processo {
   char *nomeTarefa;
   int memoAloc;
   int tempoExec;
+  ponteiroFunc func;
 } Processo;
 
 struct no {
@@ -15,16 +28,21 @@ struct no {
 int adiciona_processo(struct no **inicio_ptr, struct no **fim_ptr, int *tamanho_lista);
 void imprime_lista(struct no *inicio_ptr, int tamanho_lista);
 Processo remove_processo(struct no **inicio_ptr, struct no **fim_ptr, int *tamanho_lista);
+void executa_funcao(struct no *inicio_ptr);
+void imprime_1();
+void imprime_2();
+void imprime_3();
 
-
+ponteiroFunc func_array[] = {&imprime_1, &imprime_2, &imprime_3};
 void main() {
   struct no *inicio_ptr, *fim_ptr;
   int tamanho_lista = 0;
   int opcao=0;
 
+
   do{
-    system("clear");
-    printf("1 - Adicionar processo\n2 - Remover Processo\n3 - Listar processos\n6 - Sair\nDigite a opca que deseja: ");
+    system("cls");
+    printf("1 - Adicionar processo\n2 - Remover Processo\n3 - Listar processos\n4 - Exibir Funcao\n6 - Sair\nDigite a opca que deseja: ");
     scanf("%d", &opcao);
     switch(opcao) {
       case 1: 
@@ -39,6 +57,11 @@ void main() {
         imprime_lista(inicio_ptr, tamanho_lista);
         system("pause");
         break;
+      case 4:
+        executa_funcao(inicio_ptr);
+        system("pause");
+        break;
+
       default: 
         opcao = 6;
     }
@@ -50,6 +73,7 @@ int adiciona_processo(struct no **inicio_ptr, struct no **fim_ptr, int *tamanho_
   struct no *aux;
   struct no novoNo;
   Processo p;
+  int num_func;
 
   if(*tamanho_lista >= TAM_MAX) {
     printf("Erro, lista cheia!\n");
@@ -68,6 +92,22 @@ int adiciona_processo(struct no **inicio_ptr, struct no **fim_ptr, int *tamanho_
   printf("Digite o tempo de execucao:\n");
   scanf("%d", &(p.tempoExec));
   fflush(stdin);
+
+  int passou;
+
+  do {
+    passou = 1;
+    printf("Digite o numero da funcao (1 - 3):\n");
+    scanf("%d", &num_func);
+    fflush(stdin);
+
+    if(num_func<1 || num_func>3) {
+      passou = 0;
+    }
+
+  } while(passou==0);
+  
+  p.func = func_array[num_func-1];
 
   novoNo.processo = p;
 
@@ -111,5 +151,19 @@ Processo remove_processo(struct no **inicio_ptr, struct no **fim_ptr, int *taman
   (*tamanho_lista)--;
   printf("Removido com sucesso!\n");
   return p;
+}
+
+void executa_funcao(struct no *inicio_ptr) {
+  (*inicio_ptr->processo.func)();
+}
+
+void imprime_1(){
+  printf("Imprime 1\n\n");
+}
+void imprime_2(){
+  printf("Imprime 2\n\n");
+}
+void imprime_3(){
+  printf("Imprime 3\n\n");
 }
 
